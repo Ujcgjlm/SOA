@@ -1,0 +1,53 @@
+@startuml
+!define ENTITY(name,desc) class name as "desc" << (E,white) >>
+!define PRIMARY_KEY(x) <u>x</u>
+!define FOREIGN_KEY(x) <color:blue>x</color>
+
+ENTITY(User, "User") {
+    +PRIMARY_KEY(id) : int
+    +username : varchar
+    +password : varchar
+}
+
+ENTITY(Task, "Task") {
+    +PRIMARY_KEY(id) : int
+    +FOREIGN_KEY(user_id) : int
+    +title : varchar
+    +description : text
+    +status : varchar
+}
+
+ENTITY(Statistic, "Statistic") {
+    +PRIMARY_KEY(id) : int
+    +FOREIGN_KEY(task_id) : int
+    +likes : int
+    +views : int
+    +comments_count : int
+}
+
+ENTITY(Comment, "Comment") {
+    +PRIMARY_KEY(id) : int
+    +FOREIGN_KEY(task_id) : int
+    +FOREIGN_KEY(user_id) : int
+    +FOREIGN_KEY(parent_id) : int [null]
+    +text : text
+    +created_at : datetime
+}
+
+ENTITY(Like, "Like") {
+    +PRIMARY_KEY(id) : int
+    +FOREIGN_KEY(task_id) : int [null]
+    +FOREIGN_KEY(user_id) : int
+    +created_at : datetime
+}
+
+User --|{ Task : "has"
+User --|{ Comment : "posts"
+User --|{ Like : "gives"
+
+Task --|{ Statistic : "has"
+Task --|| Like : "receives"
+Task --o{ Comment : "has"
+
+Comment --o{ Comment : "subcomments"
+@enduml
