@@ -1,0 +1,12 @@
+@startuml
+!include <C4/C4_Context>
+
+LAYOUT_WITH_LEGEND()
+
+Person(user, "User", "Interacts with tasks, comments, and views statistics")
+System(main, "Main Service", "Endpoints for user actions and statistics")
+
+Rel(user, main, "Uses")
+
+SHOW_LEGEND()
+@enduml

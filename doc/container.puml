@@ -1,0 +1,36 @@
+@startuml
+!include <C4/C4_Container>
+
+LAYOUT_WITH_LEGEND()
+
+Person(user, "User", "Interacts with tasks, comments, and views statistics")
+
+Boundary(main, "Main Service") {
+    Container(main_api, "REST API", "Python/Go", "Endpoints for user actions and statistics")
+    ContainerDb(main_db, "User Database", "PostgreSQL", "User information")
+}
+
+Boundary(tasks, "Tasks & Comments Service") {
+    Container(tasks_service_api, "Service API", "Python/Go", "Manages tasks and comments")
+    ContainerDb(tasks_db, "Database", "PostgreSQL/MongoDB", "Tasks and comment data")
+}
+
+Boundary(stats, "Statistics Service") {
+    Container(stats_service_api, "Service API", "Python/Go", "Processes and serves statistics")
+    ContainerDb(stats_db, "Database", "ClickHouse", "Statistics data")
+}
+
+Container(broker, "Message Broker", "Kafka", "Asynchronous messaging for events")
+
+Rel(user, main_api, "Uses")
+Rel(main_api, main_db, "Queries")
+Rel(main_api, broker, "Publishes events")
+Rel(main_api, tasks_service_api, "Calls for tasks and comments")
+Rel(main_api, stats_service_api, "Queries statistics")
+Rel(tasks_service_api, tasks_db, "Queries")
+Rel(tasks_service_api, broker, "Publishes and consumes events")
+Rel(stats_service_api, broker, "Consumes events")
+Rel(stats_service_api, stats_db, "Queries")
+
+SHOW_LEGEND()
+@enduml
